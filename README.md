@@ -30,9 +30,9 @@ python manage.py migrate
 #Step 6: Run the django server
 python manage.py runserver
 
-# Step 7: Open the admin pannel if there are any users you would like to view to validate any changes you may make at
+# Step 7: Open the admin panel if there are any users you would like to view and validate any changes you may make at
 http://127.0.0.1:8000/admin
 
-# Step 8: To vew things in this admin pannel you will likely need to create a SuperUser and follow the steps
+# Step 8: To view things in this admin pannel you will likely need to create a SuperUser and follow the steps
 python manage.py createsuperuser
 ```
