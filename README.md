@@ -10,7 +10,10 @@ git clone <YOUR_GIT_URL>
 cd django-backend
 
 # Step 3: Create a virtual environment
+# Windows
 python -m venv venv
+# Mac
+python3 -m venv venv
 
 # Step 3.5 Active the virtual environment
 # On Windows:
@@ -19,7 +22,7 @@ venv\Scripts\activate
 source venv/bin/activate
 
 # Step 4: Install all the listed dependencies within your python env
-pip install -r requirements.txt
+pip install -r requirements.txt # or pip3
 
 # Step 5: On inital setup you must create the db locally ro when you make changes to the schema
 python manage.py migrate
@@ -29,4 +32,7 @@ python manage.py runserver
 
 # Step 7: Open the admin pannel if there are any users you would like to view to validate any changes you may make at
 http://127.0.0.1:8000/admin
+
+# Step 8: To vew things in this admin pannel you will likely need to create a SuperUser and follow the steps
+python manage.py createsuperuser
 ```
