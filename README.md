@@ -18,15 +18,15 @@ venv\Scripts\activate
 # On macOS/Linux:
 source venv/bin/activate
 
-# Step 4: Insatll all the listed dependencies within your python env
+# Step 4: Install all the listed dependencies within your python env
 pip install -r requirements.txt
 
-#Step 5: Run the django server
+# Step 5: On inital setup you must create the db locally ro when you make changes to the schema
+python manage.py migrate
+
+#Step 6: Run the django server
 python manage.py runserver
 
-# Step 6: Open the admin pannel if there are any users you would like to view to validate any changes you may make at
+# Step 7: Open the admin pannel if there are any users you would like to view to validate any changes you may make at
 http://127.0.0.1:8000/admin
-
-# Step *: If any errors are encountered with running the server you may need to make a database migration (simple update for your system while we still use a local db)
-python manage.py migrate
 ```
