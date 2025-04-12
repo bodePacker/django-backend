@@ -78,7 +78,7 @@ GRANT ALL ON SCHEMA public TO myuser;
  [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "Machine") + ";$pgPath", "Machine")
 ```
 
-4. Follow the above steps to create and connect to the database.
+3. Follow the above steps to create and connect to the database.
 
 ### Linux
 
