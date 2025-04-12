@@ -70,7 +70,7 @@ GRANT ALL ON SCHEMA public TO myuser;
 
 ### Windows
 
-1. Go to [Postgres]{https://www.postgresql.org/download/windows/} and download 17.x
+1. Go to [Postgres](https://www.postgresql.org/download/windows/) and download 17.x
 2. If an option click "Add PostgreSQL to the PATH" as this makes life much better
 3. Follow the above steps to create and connect to the database.
 
