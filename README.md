@@ -72,8 +72,12 @@ GRANT ALL ON SCHEMA public TO myuser;
 
 1. Go to [Postgres](https://www.postgresql.org/download/windows/) and download 17.x
 2. You must add the Postgres files you installed to the PATH var of your machine. Run this command in an admin instance of powershell and then restart your IDE and terminal
-3. $pgPath = "C:\Program Files\PostgreSQL\17\bin"
-    [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "Machine") + ";$pgPath", "Machine")
+
+```sh
+ $pgPath = "C:\Program Files\PostgreSQL\17\bin"
+ [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "Machine") + ";$pgPath", "Machine")
+```
+
 4. Follow the above steps to create and connect to the database.
 
 ### Linux
