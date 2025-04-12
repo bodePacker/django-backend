@@ -90,7 +90,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'clickrDatabase',
-        'USER': 'myuser',
+        'USER': 'django_user',
         'PASSWORD': 'mypassword', #This should be an env at somepoint
         'HOST': 'localhost',
         'PORT': '5432',

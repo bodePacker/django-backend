@@ -24,17 +24,21 @@ source venv/bin/activate
 # Step 4: Install all the listed dependencies within your python env
 pip install -r requirements.txt # or pip3
 
-# Step 5: On inital setup you must create the db locally ro when you make changes to the schema
+# Step 5: On inital setup you must create the db locally or when you make changes to the schema (this is for using sqlite3)
+# Follow the steps below to setup postgres locally
+psql postgres
+
+# Step 5.5: After setting up postgres make a migration to add the django tables to the new Postgres dbd
 python manage.py migrate
 
-#Step 6: Run the django server
+# Step 6: Make a superUser to view and login to the admin pannel. Follow the steps after using this command
+python manage.py createsuperuser
+
+#Step 7: Run the django server
 python manage.py runserver
 
-# Step 7: Open the admin panel if there are any users you would like to view and validate any changes you may make at
+# Step 8: Open the admin panel if there are any users you would like to view and validate any changes you may make at
 http://127.0.0.1:8000/admin
-
-# Step 8: To view things in this admin pannel you will likely need to create a SuperUser and follow the steps
-python manage.py createsuperuser
 ```
 
 ## Setting up the PostgreSQL database
@@ -56,16 +60,16 @@ psql postgres
 CREATE DATABASE "clickrDatabase";
 
 # Create the user with password
-CREATE USER myuser WITH PASSWORD 'mypassword';
+CREATE USER django_user WITH PASSWORD 'mypassword';
 
 # Grant privileges to the user
-GRANT ALL PRIVILEGES ON DATABASE "clickrDatabase" TO myuser;
+GRANT ALL PRIVILEGES ON DATABASE "clickrDatabase" TO django_user;
 
 # Connect to the database
 \c clickrDatabase
 
 # Grant schema privileges to the user
-GRANT ALL ON SCHEMA public TO myuser;
+GRANT ALL ON SCHEMA public TO django_user;
 ```
 
 ### Windows
