@@ -11,6 +11,8 @@ class MyUser(AbstractUser):
 class KeyboardMapping(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='mappings')
     mappings = models.JSONField()
+    name = models.CharField(max_length=50, default='Unamed Mapping')
+    description = models.CharField(max_length=100, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
