@@ -1,5 +1,7 @@
 # django-backend
 
+https://www.digitalocean.com/github-students For hosting db later
+
 ## Getting started
 
 ```sh
