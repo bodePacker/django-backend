@@ -36,10 +36,11 @@ python manage.py migrate
 # Step 6: Make a superUser to view and login to the admin pannel. Follow the steps after using this command
 python manage.py createsuperuser
 
-# Step 7: Make a copy of the test data
-python manage.py loaddata db_backup.json
+# Step 7: Make a copy of the test data THIS MIGHT NOT WORK IF NOT JUST MOVE TO NEXT STEP
+psql -U django_user clickrDatabase < backup.sql
 
-#Step 7: Run the django server
+
+#Step 8: Run the django server
 python manage.py runserver
 
 # Step 8: Open the admin panel if there are any users you would like to view and validate any changes you may make at
@@ -101,7 +102,7 @@ sudo apt install postgresql postgresql-contrib
 
 # On source machine
 
-pg_dump -U django_user -E UTF8 clickrDatabase > backup.sql
+pg_dump -U django_user clickrDatabase > backup.sql
 
 # On destination machine
 
