@@ -101,7 +101,7 @@ sudo apt install postgresql postgresql-contrib
 
 # On source machine
 
-pg_dump -U django_user clickrDatabase > backup.sql
+pg_dump -U django_user -E UTF8 clickrDatabase > backup.sql
 
 # On destination machine
 
