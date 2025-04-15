@@ -99,12 +99,10 @@ sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
 
-# On source machine (e.g., Windows), run:
+# On source machine
 
-python manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude admin.logentry --indent 2 > db_backup.json
+pg_dump -U your_username your_database_name > backup.sql
 
-# Copy db_backup.json to your other machine (e.g., MacBook)
+# On destination machine
 
-# Then on the target machine:
-
-python manage.py loaddata db_backup.json
+psql -U your_username your_database_name < backup.sql
