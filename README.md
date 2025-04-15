@@ -36,6 +36,9 @@ python manage.py migrate
 # Step 6: Make a superUser to view and login to the admin pannel. Follow the steps after using this command
 python manage.py createsuperuser
 
+# Step 7: Make a copy of the test data
+python manage.py loaddata db_backup.json
+
 #Step 7: Run the django server
 python manage.py runserver
 
@@ -95,3 +98,13 @@ The rest of the setup steps should be the same as mac
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
+
+# On source machine (e.g., Windows), run:
+
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude admin.logentry --indent 2 > db_backup.json
+
+# Copy db_backup.json to your other machine (e.g., MacBook)
+
+# Then on the target machine:
+
+python manage.py loaddata db_backup.json
