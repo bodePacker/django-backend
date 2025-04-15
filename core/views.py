@@ -1,8 +1,8 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
 from .models import MyUser, KeyboardMapping
-from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer
+from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer
 
 @api_view(['GET'])
 def get_user_profile_data(request, pk):
@@ -15,6 +15,15 @@ def get_user_profile_data(request, pk):
         return Response(seralizer.data)
     except:
         return Response({'error':'error getting user data'})
+
+@api_view(['POST'])
+@authentication_classes([])
+def register(request):
+    serializer = RegisterUserSerializer(data=request.data)
+    if(serializer.is_valid()):
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors)
 
 
 @api_view(['GET'])
