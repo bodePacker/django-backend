@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, register
+from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, CustomTokenObtainParView, CustomTokenRefreshView, register
 app_name = 'core'
 
 urlpatterns = [
@@ -14,5 +14,6 @@ urlpatterns = [
     path('users/<str:pk>/mappings/delete', delete_mapping, name='delete-mapping'),
     path('users/<str:pk>/mappings/set_active', delete_mapping, name='activate-mapping'), # Not used at the moment, likely used on the Electron App tho
     path('register', register, name='register-user'),
-    # path('users/<str:pk>/', login, name='login')
+    path('token/', CustomTokenObtainParView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

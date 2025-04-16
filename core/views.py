@@ -1,10 +1,14 @@
-from rest_framework.decorators import api_view, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
+
 
 from .models import MyUser, KeyboardMapping
 from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_user_profile_data(request, pk):
     try:
         try:
@@ -27,6 +31,7 @@ def register(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_user_mappings(request, pk):
     try:
         try:
@@ -43,6 +48,7 @@ def get_user_mappings(request, pk):
     
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_mapping(request, pk):
     try:
         try:
@@ -66,6 +72,7 @@ def create_mapping(request, pk):
         return Response({'error': f'error creating mapping: {str(e)}'}, status=400)
     
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def delete_mapping(request, pk):
     try:
         try:
@@ -88,6 +95,7 @@ def delete_mapping(request, pk):
         return Response({'error': f'error deleting mapping: {str(e)}'}, status=400)
     
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def set_active_mapping(request, pk):
     try:
         try:
@@ -114,3 +122,85 @@ def set_active_mapping(request, pk):
             
     except Exception as e:
         return Response({'error': f'error setting active mapping: {str(e)}'}, status=400)
+    
+class CustomTokenObtainParView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        try:
+            response = super().post(request, *args, **kwargs)
+
+            tokens = response.data
+
+            access_token = tokens['access']
+            refresh_token = tokens['refresh']
+            username = request.data['username']
+            try:
+                user = MyUser.objects.get(username=username)
+            except MyUser.DoesNotExist:
+                return Response({'error':'user does not exist'})
+            
+            res = Response()
+            
+            res.data = {
+                "success": True,
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                }
+            }
+
+            res.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=True,
+                samesite='None',
+                path='/'
+            )
+
+            res.set_cookie(
+                key='refresh_token',
+                value=refresh_token,
+                httponly=True,
+                secure=True,
+                samesite='None',
+                path='/'
+            )
+
+            return res
+        except Exception as e:
+            print(f"Login error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+        
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post (self, request, *args, **kwargs):
+        try:
+            refresh_token = request.COOKIES.get('refresh_token')
+            request.data['refresh'] = refresh_token
+
+            response = super().post(request, *args, **kwargs)
+            tokens = response.data
+            access_token = tokens['access']
+
+        
+            res = Response()
+
+            res.data = {
+            "success": True,
+            }
+
+            res.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=True,
+                samesite='None',
+                path='/'
+            )
+
+            return res
+        except:
+            return Response({'success':False})

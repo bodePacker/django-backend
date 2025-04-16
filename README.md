@@ -26,11 +26,11 @@ source venv/bin/activate
 # Step 4: Install all the listed dependencies within your python env
 pip install -r requirements.txt # or pip3
 
-# Step 5: On inital setup you must create the db locally or when you make changes to the schema (this is for using sqlite3)
+# Step 5: On inital setup you must create the db locally
 # Follow the steps below to setup postgres locally
 psql postgres
 
-# Step 5.5: After setting up postgres make a migration to add the django tables to the new Postgres dbd
+# Step 5.5: After setting up postgres make a migration to add the django tables to the new Postgres db
 python manage.py migrate
 
 # Step 6: Make a superUser to view and login to the admin pannel. Follow the steps after using this command

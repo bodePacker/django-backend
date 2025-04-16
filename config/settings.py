@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt',
 
     # Local apps
     'core',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -150,15 +152,28 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080', #Vite Port
+
     'http://localhost:8000', #django port
 
     # 'https://retirement-savings-app.vercel.app',
     # 'https://retirement-backend-django-production.up.railway.app'
 ]
 ALLOWED_HOSTS = [
-    'retirement-backend-django-production.up.railway.app',
+    'retirement-backend-django-production.up.railway.app', 
     'localhost',
     '127.0.0.1',
 ]
+# Token authentication framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'core.authenticate.CookiesAuthentication',
+    )
+}
+#JWT SETTINGS
+SIMPLE_JWT ={ 
+    'USER_ID_FIELD': 'username',
+    'USER_ID_CLAIM': 'username',
+}
+
 
 CORS_ALLOW_CREDENTIALS = True
