@@ -122,7 +122,12 @@ def set_active_mapping(request, pk):
             
     except Exception as e:
         return Response({'error': f'error setting active mapping: {str(e)}'}, status=400)
-    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def authenticated(request):
+    return Response('authenticated')
+
 class CustomTokenObtainParView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
