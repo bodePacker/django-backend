@@ -1,0 +1,76 @@
+[
+{
+  "model": "sessions.session",
+  "pk": "txlai6515agjg8frrdwjys4847absynr",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBKgQ4u3fcMZBimUjWQlHZlvLtt0oVu_3vvv0XAbc1ha7yEOYmriDWxuPzOEenJ5WDpgeVeJdWyLnOUhyJP2uS4h6_b6f4dZGx5r0mbgZW2AwB7SLanCQxpBeA7MBAdTT4CKu7BRuPBITlC9NihAW-S-HwBuM85Ag:1u3ktf:uBWZ8cS82Alsahd9_qgJ-R5TMHnz0gIoJ4VVSNwdCTI",
+    "expire_date": "2025-04-27T00:08:27.642Z"
+  }
+},
+{
+  "model": "core.myuser",
+  "pk": "bode",
+  "fields": {
+    "password": "pbkdf1_sha256$870000$SVvvG3V7FPTr3ToUX0Td0L$hli63ITmhcOqsF5Agrk+BUM+C3aHjWHq67z7WJ4a3P4=",
+    "last_login": "2025-04-13T00:08:27Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-04-13T00:08:06Z",
+    "profile_image": "profile_image/Screenshot_2024-09-20_161916.png",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.keyboardmapping",
+  "pk": 2,
+  "fields": {
+    "user": "bode",
+    "mappings": {
+      "name": "Test Mapping Number 2",
+      "keymap": {
+        "key1": "space",
+        "key2": "control"
+      }
+    },
+    "name": "Unamed Mapping",
+    "description": "",
+    "created_at": "2025-04-13T00:28:27.748Z",
+    "updated_at": "2025-04-13T00:28:27.748Z",
+    "is_active": false
+  }
+},
+{
+  "model": "core.keyboardmapping",
+  "pk": 3,
+  "fields": {
+    "user": "bode",
+    "mappings": {
+      "key1": "value1",
+      "key2": "value2"
+    },
+    "name": "Simple Test",
+    "description": "Basic test mapping",
+    "created_at": "2025-04-13T04:12:13.546Z",
+    "updated_at": "2025-04-13T04:12:13.546Z",
+    "is_active": false
+  }
+},
+{
+  "model": "core.keyboardmapping",
+  "pk": 4,
+  "fields": {
+    "user": "bode",
+    "mappings": {},
+    "name": "My custom mapping",
+    "description": "please work",
+    "created_at": "2025-04-13T04:19:05.908Z",
+    "updated_at": "2025-04-13T04:19:05.908Z",
+    "is_active": false
+  }
+}
+]
