@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': 'clickrDatabase',
         'USER': 'django_user',
         'PASSWORD': 'mypassword', #This should be an env at somepoint
-        'HOST': 'localhost',
+        'HOST': os.getenv('DB_HOST', 'localhost'),# use env var or default to localhost
         'PORT': '5432',
     }
 }
