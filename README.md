@@ -4,11 +4,42 @@ https://www.digitalocean.com/github-students For hosting db later
 
 ## Getting started
 
+### Docker Setup (Recommended)
+
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository using the project's Git URL
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Step 2: Navigate to the project directory
+cd django-backend
+
+# Step 3: Build and start the Docker containers
+docker-compose up -d
+
+# Step 4: The application will be available at
+http://localhost:8000
+
+# Step 5: Access the admin panel at
+http://localhost:8000/admin
+
+# Additional commands:
+# View logs
+docker-compose logs -f
+
+# Stop the containers
+docker-compose down
+
+# Create a superuser (if needed)
+docker-compose exec web python manage.py createsuperuser
+```
+
+### Local Development Setup (Alternative)
+
+```sh
+# Step 1: Clone the repository using the project's Git URL
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory
 cd django-backend
 
 # Step 3: Create a virtual environment
@@ -17,93 +48,44 @@ python -m venv venv
 # Mac
 python3 -m venv venv
 
-# Step 3.5 Active the virtual environment
+# Step 3.5 Activate the virtual environment
 # On Windows:
 venv\Scripts\activate
 # On macOS/Linux:
 source venv/bin/activate
 
-# Step 4: Install all the listed dependencies within your python env
+# Step 4: Install all the dependencies
 pip install -r requirements.txt # or pip3
 
-# Step 5: On inital setup you must create the db locally
+# Step 5: On initial setup you must create the db locally
 # Follow the steps below to setup postgres locally
 psql postgres
 
 # Step 5.5: After setting up postgres make a migration to add the django tables to the new Postgres db
 python manage.py migrate
 
-# Step 6: Make a superUser to view and login to the admin pannel. Follow the steps after using this command
+# Step 6: Make a superUser to view and login to the admin panel
 python manage.py createsuperuser
 
-# Step 7: Make a copy of the test data THIS MIGHT NOT WORK IF NOT JUST MOVE TO NEXT STEP
+# Step 7: Make a copy of the test data (optional)
 psql -U django_user clickrDatabase < backup.sql
 
-
-#Step 8: Run the django server
+# Step 8: Run the django server
 python manage.py runserver
 
-# Step 8: Open the admin panel if there are any users you would like to view and validate any changes you may make at
+# Step 9: Open the admin panel at
 http://127.0.0.1:8000/admin
 ```
 
-## Setting up the PostgreSQL database
+## Database Configuration
 
-### Mac
+When using Docker, PostgreSQL is automatically configured with:
 
-```sh
-brew install postgresql@17
-brew services start postgresql@17
-# If the psql command doesnt show up, run this
-echo 'export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
+- Database name: clickrDatabase
+- Username: django_user
+- Password: mypassword
 
-#THIS IS TEMP FOR WHILE WE STILL HAVE A DB LOCALLY
-# Connect to PostgreSQL as the default postgres user
-psql postgres
+The database is available:
 
-# Create the database
-CREATE DATABASE "clickrDatabase";
-
-# Create the user with password
-CREATE USER django_user WITH PASSWORD 'mypassword';
-
-# Grant privileges to the user
-GRANT ALL PRIVILEGES ON DATABASE "clickrDatabase" TO django_user;
-
-# Connect to the database
-\c clickrDatabase
-
-# Grant schema privileges to the user
-GRANT ALL ON SCHEMA public TO django_user;
-```
-
-### Windows
-
-1. Go to [Postgres](https://www.postgresql.org/download/windows/) and download 17.x
-2. You must add the Postgres files you installed to the PATH var of your machine. Run this command in an admin instance of powershell and then restart your IDE and terminal
-
-```sh
- $pgPath = "C:\Program Files\PostgreSQL\17\bin"
- [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "Machine") + ";$pgPath", "Machine")
-```
-
-3. Follow the above steps to create and connect to the database.
-
-### Linux
-
-According to chatGPT this is a solution for linux but I cant validate it (Ubuntu/Debian).
-The rest of the setup steps should be the same as mac
-
-```sh
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-```
-
-# On source machine
-
-pg_dump -U django_user clickrDatabase > backup.sql
-
-# On destination machine
-
-psql -U django_user clickrDatabase < backup.sql
+- Inside Docker at hostname `db` port `5432`
+- On your host machine at `localhost:5432`
