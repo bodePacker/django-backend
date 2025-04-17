@@ -15,19 +15,10 @@ def get_user_profile_data(request, pk):
             user = MyUser.objects.get(username=pk)
         except MyUser.DoesNotExist:
             return Response({'error':'user does not exist'})
-        seralizer = MyUserProfileSeralizer(user, many=False)
-        return Response(seralizer.data)
+        serializer = MyUserProfileSeralizer(user, many=False)
+        return Response(serializer.data)
     except:
         return Response({'error':'error getting user data'})
-
-@api_view(['POST'])
-@authentication_classes([])
-def register(request):
-    serializer = RegisterUserSerializer(data=request.data)
-    if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors)
 
 
 @api_view(['GET'])
@@ -122,6 +113,29 @@ def set_active_mapping(request, pk):
             
     except Exception as e:
         return Response({'error': f'error setting active mapping: {str(e)}'}, status=400)
+
+# Community
+@api_view(['GET'])
+@authentication_classes([])
+def get_all_community_mappings(request):
+    try:
+        # TODO: Change this to true
+        mappings = KeyboardMapping.objects.filter(is_public=False)
+        serializer = KeyboardMappingSerializer(mappings, many=True)
+        return Response(serializer.data)
+    except:
+        return Response({'error':'error getting user data'})
+
+
+# Login and register
+@api_view(['POST'])
+@authentication_classes([])
+def register(request):
+    serializer = RegisterUserSerializer(data=request.data)
+    if(serializer.is_valid()):
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

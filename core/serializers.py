@@ -10,7 +10,7 @@ class KeyboardMappingSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     class Meta:
         model = KeyboardMapping
-        fields = ['id', 'user', 'name', 'description','mappings', 'created_at', 'updated_at', 'is_active']
+        fields = ['id', 'user', 'name', 'description','mappings', 'created_at', 'updated_at', 'is_active', 'is_public', 'num_likes', 'num_downloads', 'tags']
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     

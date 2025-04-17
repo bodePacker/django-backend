@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
+
 
 class MyUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True, primary_key=True)
@@ -16,6 +18,14 @@ class KeyboardMapping(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
+    # Community metrics
+    is_public = models.BooleanField(default=False)
+    num_likes = models.PositiveIntegerField(default=0)
+    num_downloads = models.PositiveIntegerField(default=0)
+    tags = ArrayField(models.CharField(max_length=50),
+        blank=True,
+        default=list
+    )
 
     def __str__(self):
         mapping_name = self.mappings.get('name', 'Unnamed Mapping')

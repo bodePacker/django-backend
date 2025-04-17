@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, CustomTokenObtainParView, CustomTokenRefreshView, register, authenticated
+from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, CustomTokenObtainParView, CustomTokenRefreshView, register, authenticated, get_all_community_mappings
 app_name = 'core'
 
 urlpatterns = [
@@ -21,4 +21,6 @@ urlpatterns = [
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('authenticated/', authenticated),
 
+    # Community 
+    path('community/', get_all_community_mappings, name='community-mappings')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
