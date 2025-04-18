@@ -132,10 +132,18 @@ def get_all_community_mappings(request):
 @authentication_classes([])
 def register(request):
     serializer = RegisterUserSerializer(data=request.data)
-    if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors)
+    if serializer.is_valid():
+        try:
+            # Check if username already exists
+            username = request.data.get('username')
+            if MyUser.objects.filter(username=username).exists():
+                return Response({'error': 'Username already exists'}, status=400)
+                
+            serializer.save()
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': f'Registration failed: {str(e)}'}, status=400)
+    return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
