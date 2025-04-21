@@ -155,6 +155,9 @@ CSRF_TRUSTED_ORIGINS = [
 
     'http://localhost:8000', #django port
 
+    'http://localhost:5173', #Electron port
+
+
     # 'https://retirement-savings-app.vercel.app',
     # 'https://retirement-backend-django-production.up.railway.app'
 ]
