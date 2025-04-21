@@ -5,7 +5,20 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 
 
 from .models import MyUser, KeyboardMapping
-from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer
+from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer, WaitlistSerializer
+
+@api_view(['POST'])
+@permission_classes([])
+def join_waitlist(request):
+    try:
+        serializer = WaitlistSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Successfully joined waitlist'}, status=201)
+        return Response(serializer.errors, status=400)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser, KeyboardMapping
+from .models import MyUser, KeyboardMapping, Waitlist
 
 class MyUserProfileSeralizer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +27,8 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+    
+class WaitlistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Waitlist
+        fields = ['email']
