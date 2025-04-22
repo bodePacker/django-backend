@@ -35,8 +35,6 @@ class KeyboardMapping(models.Model):
     class Meta:
         ordering = ['-updated_at']  # Most recent mappings first
 
-    # ... existing code ...
-
 class Waitlist(models.Model):
     email = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
