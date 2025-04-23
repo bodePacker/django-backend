@@ -52,7 +52,7 @@ def get_user_mappings(request, pk):
     
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([])
 def create_mapping(request, pk):
     try:
         try:
