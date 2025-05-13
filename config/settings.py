@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-h@axilta6b^w6z6)s)c^e9%=z6gm^x5ap6%wy#2n=gccwalnzp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 AUTH_USER_MODEL = 'core.MyUser'
 
 # Application definition
@@ -96,11 +94,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'clickrDatabase',
-        'USER': 'django_user',
-        'PASSWORD': 'mypassword', #This should be an env at somepoint
-        'HOST': os.getenv('DB_HOST', 'localhost'),# use env var or default to localhost
-        'PORT': '5432',
+        'NAME': os.getenv('PGDATABASE', 'clickrDatabase'),
+        'USER': os.getenv('PGUSER', 'django_user'),
+        'PASSWORD': os.getenv('PGPASSWORD', 'mypassword'),
+        'HOST': os.getenv('PGHOST', 'localhost'),
+        'PORT': os.getenv('PGPORT', '5432'),
     }
 }
 
@@ -149,6 +147,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
     "http://localhost:8080",
+    'https://temp-django-docker-production.up.railway.app',
+    'https://clcikr-web.vercel.app',
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080', #Vite Port
@@ -156,13 +156,13 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000', #django port
 
     'http://localhost:5173', #Electron port
+    'https://clickr-web.vercel.app', 
+    
+    'clcikr-backend-production.up.railway.app', 
 
-
-    # 'https://retirement-savings-app.vercel.app',
-    # 'https://retirement-backend-django-production.up.railway.app'
 ]
 ALLOWED_HOSTS = [
-    'retirement-backend-django-production.up.railway.app', 
+    'clcikr-backend-production.up.railway.app', 
     'localhost',
     '127.0.0.1',
 ]
