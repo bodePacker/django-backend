@@ -138,6 +138,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -147,8 +149,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
     "http://localhost:8080",
-    'https://temp-django-docker-production.up.railway.app',
-    'https://clcikr-web.vercel.app',
+    'https://clickr-backend-dev.up.railway.app', 
+    'https://clickr-web.vercel.app',
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080', #Vite Port
@@ -158,11 +160,11 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173', #Electron port
     'https://clickr-web.vercel.app', 
     
-    'clcikr-backend-production.up.railway.app', 
+    'https://clickr-backend-dev.up.railway.app', 
 
 ]
 ALLOWED_HOSTS = [
-    'clcikr-backend-production.up.railway.app', 
+    'clickr-backend-dev.up.railway.app', 
     'localhost',
     '127.0.0.1',
 ]

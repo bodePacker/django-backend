@@ -1,1 +1,1 @@
-web: gunicorn clickr-backend.wsgi
+web: gunicorn config.wsgi:application --log-file -
