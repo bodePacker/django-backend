@@ -1,0 +1,17 @@
+stages:
+  - deploy
+
+deploy-to-railway:
+  stage: deploy
+  image: node:16
+  script:
+    # Install Railway CLI
+    - npm install -g @railway/cli
+
+    # Login to Railway using the token
+    - railway login --browserless --token=$RAILWAY_TOKEN
+
+    # Deploy the Django application
+    - railway up
+  only:
+    - main # Only run this job when changes are pushed to the main branch
