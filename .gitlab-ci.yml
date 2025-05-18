@@ -8,4 +8,4 @@ railway-deploy:
   variables:
     SVC_ID: RAILWAY_SERVICE_NAME
   script:
-    - railway up
+    - railway up --service=$SVC_ID
