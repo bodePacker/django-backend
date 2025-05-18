@@ -1,16 +1,11 @@
-default:
-  image: node:16.16.0
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-deploy-to-railway:
+railway-deploy:
   stage: deploy
+  image: ghcr.io/railwayapp/cli:latest
+  variables:
+    SVC_ID: RAILWAY_SERVICE_NAME
   script:
-    # Install Railway CLI
-    - npm install -g @railway/cli
-
-    # Login to Railway using the token
-    - railway login --browserless --token=$RAILWAY_TOKEN
-
-    # Deploy the Django application
-    - railway up
-  only:
-    - main # Only run this job when changes are pushed to the main branch
+    - railway up --service=$SVC_ID
