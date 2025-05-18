@@ -5,7 +5,5 @@ workflow:
 railway-deploy:
   stage: deploy
   image: ghcr.io/railwayapp/cli:latest
-  variables:
-    SVC_ID: RAILWAY_SERVICE_NAME
   script:
-    - railway up --service=$SVC_ID
+    - railway up --service=clickr-backend
