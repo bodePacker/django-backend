@@ -1,9 +1,8 @@
-stages:
-  - deploy
+default:
+  image: node:16.16.0
 
 deploy-to-railway:
   stage: deploy
-  image: node:16
   script:
     # Install Railway CLI
     - npm install -g @railway/cli
