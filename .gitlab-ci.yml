@@ -9,5 +9,4 @@ railway-deploy:
     SVC_ID: RAILWAY_SERVICE_NAME
     RAILWAY_TOKEN: ${RAILWAY_TOKEN}
   script:
-    - railway login $RAILWAY_TOKEN
     - railway up --service=$SVC_ID
