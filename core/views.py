@@ -66,7 +66,8 @@ def create_mapping(request, pk):
             'name': request.data.get('name'),
             'description': request.data.get('description', ''),
             'mappings': request.data.get('mappings', {}),
-            'is_active': request.data.get('is_active', False)
+            'is_active': request.data.get('is_active', False),
+            'tags': request.data.get('tags', [])
         }
         
         mapping = KeyboardMapping.objects.create(**mapping_data)
