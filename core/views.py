@@ -50,6 +50,15 @@ def get_user_mappings(request, pk):
     except Exception as e:
         return Response({'error': f'error getting user mappings: {str(e)}'})
     
+@api_view(['GET'])
+@permission_classes([])
+def get_specific_mapping(request, mapping_id):
+    try:
+        mapping = KeyboardMapping.objects.get(id=mapping_id)
+        serializer = KeyboardMappingSerializer(mapping)
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': f'error getting mapping: {str(e)}'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
