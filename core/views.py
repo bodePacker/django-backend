@@ -137,6 +137,17 @@ def set_active_mapping(request, pk):
     except Exception as e:
         return Response({'error': f'error setting active mapping: {str(e)}'}, status=400)
 
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def add_tags(request, mapping_id):
+    try:
+        mapping = KeyboardMapping.objects.get(id=mapping_id)
+        mapping.tags = request.data.get('tags', [])
+        mapping.save()
+        return Response({'message': 'Tags added successfully'}, status=200)
+    except Exception as e:
+        return Response({'error': f'error adding tags: {str(e)}'}, status=400)
+
 # Community
 @api_view(['GET'])
 @authentication_classes([])

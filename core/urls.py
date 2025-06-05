@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, CustomTokenObtainParView, CustomTokenRefreshView, register, authenticated, get_all_community_mappings, join_waitlist, get_specific_mapping
+from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, CustomTokenObtainParView, CustomTokenRefreshView, register, authenticated, get_all_community_mappings, join_waitlist, get_specific_mapping, add_tags
 app_name = 'core'
 
 urlpatterns = [
@@ -15,7 +15,7 @@ urlpatterns = [
     path('users/<str:pk>/mappings/new', create_mapping, name='create-mapping'),
     path('users/<str:pk>/mappings/delete', delete_mapping, name='delete-mapping'),
     path('users/<str:pk>/mappings/set_active', delete_mapping, name='activate-mapping'), # Not used at the moment, likely used on the Electron App tho
-
+    path('users/mappings/<str:mapping_id>/add_tags', add_tags, name='add-tags'),
     # Login and Auth
     path('register/', register, name='register-user'),
     path('token/', CustomTokenObtainParView.as_view(), name='token_obtain_pair'),
