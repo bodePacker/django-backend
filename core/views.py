@@ -175,8 +175,7 @@ def update_mapping_visibility(request, mapping_id):
 @authentication_classes([])
 def get_all_community_mappings(request):
     try:
-        # TODO: Change this to true
-        mappings = KeyboardMapping.objects.filter(is_public=False)
+        mappings = KeyboardMapping.objects.filter(is_public=True)
         serializer = KeyboardMappingSerializer(mappings, many=True)
         return Response(serializer.data)
     except:
