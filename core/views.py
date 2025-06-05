@@ -147,6 +147,17 @@ def add_tags(request, mapping_id):
         return Response({'message': 'Tags added successfully'}, status=200)
     except Exception as e:
         return Response({'error': f'error adding tags: {str(e)}'}, status=400)
+    
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def rename_mapping(request, mapping_id):
+    try:
+        mapping = KeyboardMapping.objects.get(id=mapping_id)
+        mapping.name = request.data.get('name', '')
+        mapping.save()
+        return Response({'message': 'Mapping renamed successfully'}, status=200)
+    except Exception as e:
+        return Response({'error': f'error renaming mapping: {str(e)}'}, status=400)
 
 # Community
 @api_view(['GET'])
