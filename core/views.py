@@ -55,8 +55,18 @@ def get_user_mappings(request, pk):
 def get_specific_mapping(request, mapping_id):
     try:
         mapping = KeyboardMapping.objects.get(id=mapping_id)
+        # Check if mapping is public or user owns it
+        if not mapping.is_public:
+            # If mapping is private, user must be authenticated and own it
+            if not request.user.is_authenticated:
+                return Response({'error': 'Authentication required for private mappings'}, status=401)
+            if mapping.user != request.user:
+                return Response({'error': 'Access denied - you do not own this mapping'}, status=403)
+        
         serializer = KeyboardMappingSerializer(mapping)
         return Response(serializer.data)
+    except KeyboardMapping.DoesNotExist:
+        return Response({'error': 'Mapping not found'}, status=404)
     except Exception as e:
         return Response({'error': f'error getting mapping: {str(e)}'})
 
