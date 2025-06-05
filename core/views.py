@@ -158,6 +158,17 @@ def rename_mapping(request, mapping_id):
         return Response({'message': 'Mapping renamed successfully'}, status=200)
     except Exception as e:
         return Response({'error': f'error renaming mapping: {str(e)}'}, status=400)
+    
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_mapping_visibility(request, mapping_id):
+    try:
+        mapping = KeyboardMapping.objects.get(id=mapping_id)
+        mapping.is_public = request.data.get('is_public')
+        mapping.save()
+        return Response({'message': 'Mapping visibility updated successfully'}, status=200)
+    except Exception as e:
+        return Response({'error': f'error updating mapping visibility: {str(e)}'}, status=400)
 
 # Community
 @api_view(['GET'])
