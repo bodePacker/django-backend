@@ -2,7 +2,22 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import get_user_profile_data, get_user_mappings, create_mapping, delete_mapping, CustomTokenObtainParView, CustomTokenRefreshView, register, authenticated, get_all_community_mappings, join_waitlist, get_specific_mapping, add_tags, rename_mapping, update_mapping_visibility
+from .views import (
+    get_user_profile_data, 
+    get_user_mappings, 
+    create_mapping, 
+    delete_mapping, 
+    CustomTokenObtainParView, 
+    CustomTokenRefreshView, 
+    register, 
+    authenticated, 
+    get_all_community_mappings, 
+    join_waitlist, 
+    get_specific_mapping, 
+    add_tags, 
+    rename_mapping, 
+    update_mapping_visibility
+)
 app_name = 'core'
 
 urlpatterns = [
@@ -18,6 +33,7 @@ urlpatterns = [
     path('users/mappings/<str:mapping_id>/add_tags', add_tags, name='add-tags'),
     path('users/mappings/<str:mapping_id>/rename', rename_mapping, name='rename-mapping'),
     path('users/mappings/<str:mapping_id>/visibility', update_mapping_visibility, name='update-mapping-visibility'),
+    
     # Login and Auth
     path('register/', register, name='register-user'),
     path('token/', CustomTokenObtainParView.as_view(), name='token_obtain_pair'),

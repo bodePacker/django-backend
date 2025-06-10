@@ -3,7 +3,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
-
 from .models import MyUser, KeyboardMapping
 from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer, WaitlistSerializer
 
@@ -182,7 +181,7 @@ def update_mapping_visibility(request, mapping_id):
 
 # Community
 @api_view(['GET'])
-@authentication_classes([])
+@permission_classes([])
 def get_all_community_mappings(request):
     try:
         mappings = KeyboardMapping.objects.filter(is_public=True)
@@ -219,80 +218,55 @@ class CustomTokenObtainParView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
             response = super().post(request, *args, **kwargs)
-
             tokens = response.data
 
             access_token = tokens['access']
             refresh_token = tokens['refresh']
             username = request.data['username']
+            
             try:
                 user = MyUser.objects.get(username=username)
             except MyUser.DoesNotExist:
                 return Response({'error':'user does not exist'})
             
-            res = Response()
-            
-            res.data = {
+            # Return tokens in response body
+            return Response({
                 "success": True,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
                 "user": {
                     "username": user.username,
                     "email": user.email,
                 }
-            }
-
-            res.set_cookie(
-                key='access_token',
-                value=access_token,
-                httponly=True,
-                secure=True,
-                samesite='None',
-                path='/'
-            )
-
-            res.set_cookie(
-                key='refresh_token',
-                value=refresh_token,
-                httponly=True,
-                secure=True,
-                samesite='None',
-                path='/'
-            )
-
-            return res
+            })
         except Exception as e:
             print(f"Login error: {str(e)}")
             return Response({
                 'success': False,
                 'error': str(e)
             }, status=400)
-        
 
 class CustomTokenRefreshView(TokenRefreshView):
-    def post (self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
-            refresh_token = request.COOKIES.get('refresh_token')
-            request.data['refresh'] = refresh_token
-
+            # Get refresh token from request body
+            refresh_token = request.data.get('refresh')
+            
+            if not refresh_token:
+                return Response({'error': 'Refresh token is required'}, status=400)
+            
+            # Standard refresh process
             response = super().post(request, *args, **kwargs)
             tokens = response.data
             access_token = tokens['access']
-
-        
-            res = Response()
-
-            res.data = {
-            "success": True,
-            }
-
-            res.set_cookie(
-                key='access_token',
-                value=access_token,
-                httponly=True,
-                secure=True,
-                samesite='None',
-                path='/'
-            )
-
-            return res
-        except:
-            return Response({'success':False})
+            
+            # Return new access token in response body
+            return Response({
+                "success": True,
+                "access_token": access_token,
+            })
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e)
+            }, status=400)

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -146,42 +147,54 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# CORS Configuration
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8080",
     "http://localhost:8080",
-    'https://clickr-backend-dev.up.railway.app', 
     'https://clickr-backend-production.up.railway.app',
     'https://clickr-web.vercel.app',
 ]
+
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8080', #Vite Port
-
-    'http://localhost:8000', #django port
-
-    'http://localhost:5173', #Electron port
+    'http://localhost:8080',
+    'http://localhost:8000',
     'https://clickr-web.vercel.app', 
-    
-    'https://clickr-backend-dev.up.railway.app', 
     'https://clickr-backend-production.up.railway.app',
-
 ]
+
 ALLOWED_HOSTS = [
-    'clickr-backend-dev.up.railway.app', 
     'clickr-backend-production.up.railway.app',
     'localhost',
-    '127.0.0.1',
 ]
-# Token authentication framework
+
+# REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'core.authenticate.CookiesAuthentication',
-    )
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
-#JWT SETTINGS
-SIMPLE_JWT ={ 
+
+# JWT SETTINGS
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     'USER_ID_FIELD': 'username',
     'USER_ID_CLAIM': 'username',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
 }
 
-
-CORS_ALLOW_CREDENTIALS = True
+# CORS settings
+CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
