@@ -152,6 +152,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     'https://clickr-backend-production.up.railway.app',
     'https://clickr-web.vercel.app',
+    'https://keyclickr.com',
+
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -159,6 +161,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://clickr-web.vercel.app', 
     'https://clickr-backend-production.up.railway.app',
+    'https://keyclickr.com',
 ]
 
 ALLOWED_HOSTS = [
