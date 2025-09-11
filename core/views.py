@@ -349,13 +349,13 @@ class ElectronTokenRefreshView(TokenRefreshView):
             try:
                 # Decode the refresh token to get user
                 token = RefreshToken(refresh_token)
-                user_id = token.get('user_id')
+                username = token.get('username')
                 
-                if not user_id:
+                if not username:
                     return Response({'error': 'Invalid refresh token'}, status=401)
                 
                 try:
-                    user = MyUser.objects.get(username=user_id)
+                    user = MyUser.objects.get(username=username)
                 except MyUser.DoesNotExist:
                     return Response({'error': 'User not found'}, status=401)
                 
