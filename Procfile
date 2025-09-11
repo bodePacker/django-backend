@@ -1,1 +1,1 @@
-web: gunicorn config.wsgi:application --log-file -
+web: gunicorn config.wsgi:application --log-file - --timeout 30 --workers 2 --max-requests 1000 --max-requests-jitter 100 --preload

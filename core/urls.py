@@ -6,7 +6,8 @@ from .views import (
     get_user_profile_data, 
     get_user_mappings, 
     create_mapping, 
-    delete_mapping, 
+    delete_mapping,
+    set_active_mapping,
     CustomTokenObtainParView, 
     CustomTokenRefreshView, 
     register, 
@@ -31,7 +32,7 @@ urlpatterns = [
     path('users/mappings/<str:mapping_id>', get_specific_mapping, name='get-mapping'),
     path('users/<str:pk>/mappings/new', create_mapping, name='create-mapping'),
     path('users/<str:pk>/mappings/delete', delete_mapping, name='delete-mapping'),
-    path('users/<str:pk>/mappings/set_active', delete_mapping, name='activate-mapping'), # Not used at the moment, likely used on the Electron App tho
+    path('users/<str:pk>/mappings/set_active', set_active_mapping, name='activate-mapping'), # Not used at the moment, likely used on the Electron App tho
     path('users/mappings/<str:mapping_id>/add_tags', add_tags, name='add-tags'),
     path('users/mappings/<str:mapping_id>/rename', rename_mapping, name='rename-mapping'),
     path('users/mappings/<str:mapping_id>/visibility', update_mapping_visibility, name='update-mapping-visibility'),

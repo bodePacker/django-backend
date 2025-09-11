@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-h@axilta6b^w6z6)s)c^e9%=z6gm^x5ap6%wy#2n=gccwalnzp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 AUTH_USER_MODEL = 'core.MyUser'
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
+    # 'rest_framework_simplejwt.token_blacklist',
 
     # Local apps
     'core',
@@ -100,6 +101,11 @@ DATABASES = {
         'PASSWORD': os.getenv('PGPASSWORD', 'mypassword'),
         'HOST': os.getenv('PGHOST', 'localhost'),
         'PORT': os.getenv('PGPORT', '5432'),
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'options': '-c statement_timeout=30000'  # 30 second timeout for queries
+        },
+        'CONN_MAX_AGE': 60,  # Connection pooling - reuse connections for 60 seconds
     }
 }
 
@@ -181,7 +187,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'BLACKLIST_AFTER_ROTATION': False,  # Disabled until token_blacklist tables are migrated
     'USER_ID_FIELD': 'username',
     'USER_ID_CLAIM': 'username',
     'AUTH_HEADER_TYPES': ('Bearer',),

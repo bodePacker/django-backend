@@ -369,8 +369,8 @@ class ElectronTokenRefreshView(TokenRefreshView):
                 new_access_token = str(new_refresh.access_token)
                 new_refresh_token = str(new_refresh)
                 
-                # Blacklist the old refresh token
-                token.blacklist()
+                # # Blacklist the old refresh token
+                # token.blacklist()
                 
                 return Response({
                     "success": True,
