@@ -2,6 +2,8 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
+from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import timedelta
 
 from .models import MyUser, KeyboardMapping
 from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer, WaitlistSerializer
@@ -265,6 +267,121 @@ class CustomTokenRefreshView(TokenRefreshView):
                 "success": True,
                 "access_token": access_token,
             })
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+
+class ElectronTokenObtainView(TokenObtainPairView):
+    """
+    Custom token view for Electron app that provides extended refresh tokens
+    """
+    def post(self, request, *args, **kwargs):
+        try:
+            # Verify this is coming from Electron app
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            client_type = request.data.get('client_type', '')
+            
+            # Check if request is from Electron app
+            is_electron = 'electron' in user_agent.lower() or client_type == 'electron'
+            
+            username = request.data.get('username')
+            password = request.data.get('password')
+            
+            if not username or not password:
+                return Response({'error': 'Username and password are required'}, status=400)
+            
+            try:
+                user = MyUser.objects.get(username=username)
+            except MyUser.DoesNotExist:
+                return Response({'error': 'Invalid credentials'}, status=401)
+            
+            # Verify password
+            if not user.check_password(password):
+                return Response({'error': 'Invalid credentials'}, status=401)
+            
+            # Create tokens
+            refresh = RefreshToken.for_user(user)
+            
+            # Set extended lifetime for Electron app
+            if is_electron:
+                # Set refresh token to last 30 days for Electron
+                refresh.set_exp(lifetime=timedelta(days=30))
+            
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            
+            return Response({
+                "success": True,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                },
+                "token_type": "electron_extended" if is_electron else "standard"
+            })
+            
+        except Exception as e:
+            print(f"Electron login error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+
+class ElectronTokenRefreshView(TokenRefreshView):
+    """
+    Custom refresh view for Electron app that maintains extended refresh token lifetime
+    """
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data.get('refresh')
+            client_type = request.data.get('client_type', '')
+            
+            if not refresh_token:
+                return Response({'error': 'Refresh token is required'}, status=400)
+            
+            # Verify this is from Electron
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            is_electron = 'electron' in user_agent.lower() or client_type == 'electron'
+            
+            try:
+                # Decode the refresh token to get user
+                token = RefreshToken(refresh_token)
+                user_id = token.get('user_id')
+                
+                if not user_id:
+                    return Response({'error': 'Invalid refresh token'}, status=401)
+                
+                try:
+                    user = MyUser.objects.get(username=user_id)
+                except MyUser.DoesNotExist:
+                    return Response({'error': 'User not found'}, status=401)
+                
+                # Create new tokens
+                new_refresh = RefreshToken.for_user(user)
+                
+                # Set extended lifetime for Electron app
+                if is_electron:
+                    new_refresh.set_exp(lifetime=timedelta(days=30))
+                
+                new_access_token = str(new_refresh.access_token)
+                new_refresh_token = str(new_refresh)
+                
+                # Blacklist the old refresh token
+                token.blacklist()
+                
+                return Response({
+                    "success": True,
+                    "access_token": new_access_token,
+                    "refresh_token": new_refresh_token,
+                    "token_type": "electron_extended" if is_electron else "standard"
+                })
+                
+            except Exception as token_error:
+                return Response({'error': 'Invalid or expired refresh token'}, status=401)
+            
         except Exception as e:
             return Response({
                 'success': False,

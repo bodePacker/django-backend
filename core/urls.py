@@ -16,7 +16,9 @@ from .views import (
     get_specific_mapping, 
     add_tags, 
     rename_mapping, 
-    update_mapping_visibility
+    update_mapping_visibility,
+    ElectronTokenObtainView,
+    ElectronTokenRefreshView
 )
 app_name = 'core'
 
@@ -39,6 +41,10 @@ urlpatterns = [
     path('token/', CustomTokenObtainParView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('authenticated/', authenticated),
+    
+    # Electron-specific auth with extended refresh tokens
+    path('electron/token/', ElectronTokenObtainView.as_view(), name='electron_token_obtain'),
+    path('electron/token/refresh/', ElectronTokenRefreshView.as_view(), name='electron_token_refresh'),
 
     # Community 
     path('community/', get_all_community_mappings, name='community-mappings'),
