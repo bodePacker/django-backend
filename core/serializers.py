@@ -4,7 +4,8 @@ from .models import MyUser, KeyboardMapping, Waitlist
 class MyUserProfileSeralizer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['username', 'profile_image']
+        fields = ['username', 'email', 'profile_image', 'default_mapping_visibility']
+        read_only_fields = ['username']
 
 class KeyboardMappingSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()

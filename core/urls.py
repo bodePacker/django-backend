@@ -19,13 +19,23 @@ from .views import (
     rename_mapping, 
     update_mapping_visibility,
     ElectronTokenObtainView,
-    ElectronTokenRefreshView
+    ElectronTokenRefreshView,
+    update_user_profile,
+    update_user_preferences,
+    change_password,
+    delete_account,
+    sync_mappings
 )
 app_name = 'core'
 
 urlpatterns = [
     # User info 
     path('users/<str:pk>', get_user_profile_data, name='user-profile'),
+    path('users/<str:pk>/profile/', update_user_profile, name='update-profile'),
+    path('users/<str:pk>/preferences/', update_user_preferences, name='update-preferences'),
+    path('users/<str:pk>/change-password/', change_password, name='change-password'),
+    path('users/<str:pk>/account/', delete_account, name='delete-account'),
+    path('users/<str:pk>/sync/', sync_mappings, name='sync-mappings'),
     
     # Keyboard mapping endpoints
     path('users/<str:pk>/mappings', get_user_mappings, name='list-mappings'),
