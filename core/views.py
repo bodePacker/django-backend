@@ -1,11 +1,12 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta
 from django.contrib.auth import update_session_auth_hash
+from django.conf import settings
 import json
 
 from .models import MyUser, KeyboardMapping
@@ -462,6 +463,10 @@ class ElectronTokenObtainView(TokenObtainPairView):
     """
     Custom token view for Electron app that provides extended refresh tokens
     """
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    serializer_class = None  # Bypass base class serializer validation
+    
     def post(self, request, *args, **kwargs):
         try:
             # Verify this is coming from Electron app
@@ -471,7 +476,8 @@ class ElectronTokenObtainView(TokenObtainPairView):
             # Check if request is from Electron app
             is_electron = 'electron' in user_agent.lower() or client_type == 'electron'
             
-            username = request.data.get('username')
+            # Get username and password from request data
+            username = request.data.get('username') or request.data.get('user')
             password = request.data.get('password')
             
             if not username or not password:
@@ -509,10 +515,14 @@ class ElectronTokenObtainView(TokenObtainPairView):
             })
             
         except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
             print(f"Electron login error: {str(e)}")
+            print(f"Traceback: {error_trace}")
             return Response({
                 'success': False,
-                'error': str(e)
+                'error': str(e),
+                'details': error_trace if settings.DEBUG else None
             }, status=400)
 
 class ElectronTokenRefreshView(TokenRefreshView):
