@@ -6,6 +6,11 @@ from django.contrib.postgres.fields import ArrayField
 class MyUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True, primary_key=True)
     profile_image = models.ImageField(upload_to='profile_image/', blank=True, null=True)
+    default_mapping_visibility = models.CharField(
+        max_length=10,
+        choices=[('public', 'Public'), ('private', 'Private')],
+        default='private'
+    )
     
     def __str__(self):
         return self.username

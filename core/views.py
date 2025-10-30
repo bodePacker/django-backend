@@ -1,9 +1,12 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta
+from django.contrib.auth import update_session_auth_hash
+import json
 
 from .models import MyUser, KeyboardMapping
 from .serializers import MyUserProfileSeralizer, KeyboardMappingSerializer, RegisterUserSerializer, WaitlistSerializer
@@ -28,11 +31,16 @@ def get_user_profile_data(request, pk):
         try:
             user = MyUser.objects.get(username=pk)
         except MyUser.DoesNotExist:
-            return Response({'error':'user does not exist'})
+            return Response({'error':'user does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Only allow users to view their own profile
+        if user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = MyUserProfileSeralizer(user, many=False)
         return Response(serializer.data)
-    except:
-        return Response({'error':'error getting user data'})
+    except Exception as e:
+        return Response({'error': f'error getting user data: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -180,6 +188,183 @@ def update_mapping_visibility(request, mapping_id):
         return Response({'message': 'Mapping visibility updated successfully'}, status=200)
     except Exception as e:
         return Response({'error': f'error updating mapping visibility: {str(e)}'}, status=400)
+
+# Account Settings Endpoints
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_user_profile(request, pk):
+    """
+    Update user profile information (email, profile_image)
+    """
+    try:
+        try:
+            user = MyUser.objects.get(username=pk)
+        except MyUser.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Only allow users to update their own profile
+        if user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Update email if provided
+        if 'email' in request.data:
+            user.email = request.data['email']
+        
+        # Update profile image if provided
+        if 'profile_image' in request.FILES:
+            user.profile_image = request.FILES['profile_image']
+        
+        user.save()
+        
+        serializer = MyUserProfileSeralizer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({'error': f'Error updating profile: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_user_preferences(request, pk):
+    """
+    Update user preferences (default_mapping_visibility)
+    """
+    try:
+        try:
+            user = MyUser.objects.get(username=pk)
+        except MyUser.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Only allow users to update their own preferences
+        if user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Update default_mapping_visibility if provided
+        if 'default_mapping_visibility' in request.data:
+            visibility = request.data['default_mapping_visibility']
+            if visibility not in ['public', 'private']:
+                return Response({'error': 'default_mapping_visibility must be "public" or "private"'}, status=status.HTTP_400_BAD_REQUEST)
+            user.default_mapping_visibility = visibility
+        
+        user.save()
+        
+        serializer = MyUserProfileSeralizer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({'error': f'Error updating preferences: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request, pk):
+    """
+    Change user password
+    """
+    try:
+        try:
+            user = MyUser.objects.get(username=pk)
+        except MyUser.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Only allow users to change their own password
+        if user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+        
+        # Validate required fields
+        if not current_password or not new_password or not confirm_password:
+            return Response({'error': 'current_password, new_password, and confirm_password are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verify current password
+        if not user.check_password(current_password):
+            return Response({'error': 'Current password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if new passwords match
+        if new_password != confirm_password:
+            return Response({'error': 'New passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check password length
+        if len(new_password) < 8:
+            return Response({'error': 'Password must be at least 8 characters long'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Set new password
+        user.set_password(new_password)
+        user.save()
+        
+        # Update session auth hash to keep user logged in
+        update_session_auth_hash(request, user)
+        
+        return Response({'success': True, 'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({'error': f'Error changing password: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_account(request, pk):
+    """
+    Permanently delete user account and all associated data
+    """
+    try:
+        try:
+            user = MyUser.objects.get(username=pk)
+        except MyUser.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Only allow users to delete their own account
+        if user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Require password confirmation for security
+        password = request.data.get('password')
+        if not password:
+            return Response({'error': 'Password confirmation is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verify password
+        if not user.check_password(password):
+            return Response({'error': 'Password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Delete user (this will cascade delete all mappings due to CASCADE in model)
+        username = user.username
+        user.delete()
+        
+        return Response({'success': True, 'message': f'Account {username} deleted successfully'}, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({'error': f'Error deleting account: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sync_mappings(request, pk):
+    """
+    Manually trigger sync of user mappings
+    This endpoint can be used to fetch and sync user mappings from cloud
+    """
+    try:
+        try:
+            user = MyUser.objects.get(username=pk)
+        except MyUser.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Only allow users to sync their own mappings
+        if user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Get all user mappings
+        mappings = KeyboardMapping.objects.filter(user=user)
+        serializer = KeyboardMappingSerializer(mappings, many=True)
+        
+        return Response({
+            'success': True,
+            'message': 'Sync completed successfully',
+            'mappings': serializer.data,
+            'count': len(serializer.data)
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({'error': f'Error syncing mappings: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
 # Community
 @api_view(['GET'])
